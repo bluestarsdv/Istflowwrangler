@@ -10,40 +10,18 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Método GET: Puxa os dados usando env.DataBank
-    if (request.method === "GET") {
-      try {
-        const { results } = await env.DataBank.prepare(
-          "SELECT * FROM usuarios ORDER BY id DESC LIMIT 100"
-        ).all();
-        
-        return new Response(JSON.stringify(results), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      } catch (err) {
-        return new Response(JSON.stringify({ sucesso: false, erro: err.message }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      }
-    }
-
-    // Método POST: Salva os dados usando env.DataBank
     if (request.method === "POST") {
       try {
         const dados = await request.json();
-        const nome = dados.nome || '';
-        const email = dados.email || '';
-        const senha = dados.senha || '';
-        const idade = dados.idade || 0;
-        const tipoAcesso = dados.tipoAcesso || 'limitado';
-        const dataRegistro = new Date().toISOString();
+        
+        // Aqui você faria o que quiser com os dados recebidos (nome, email, etc)
+        console.log("Dados recebidos:", dados);
 
-        await env.DataBank.prepare(
-          "INSERT INTO usuarios (nome, email, senha, idade, tipo_acesso, data) VALUES (?, ?, ?, ?, ?, ?)"
-        ).bind(nome, email, senha, idade, tipoAcesso, dataRegistro).run();
-
-        return new Response(JSON.stringify({ sucesso: true, mensagem: "Salvo com sucesso!" }), {
+        return new Response(JSON.stringify({ 
+          sucesso: true, 
+          mensagem: "Recebido com sucesso!",
+          dadosRecebidos: dados 
+        }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       } catch (err) {
@@ -54,6 +32,11 @@ export default {
       }
     }
 
-    return new Response("IstFlow Worker rodando com sucesso!", { headers: corsHeaders });
+    return new Response(JSON.stringify({ 
+      status: "online", 
+      mensagem: "Worker rodando perfeitamente!" 
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
   },
 };
