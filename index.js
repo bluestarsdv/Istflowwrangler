@@ -10,10 +10,12 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Se for GET, busca os usuários do banco D1 e mostra na tela
+    // Método GET: Retorna a lista de usuários cadastrados do banco D1
     if (request.method === "GET") {
       try {
-        const { results } = await env.DB.prepare("SELECT * FROM usuarios ORDER BY id DESC").all();
+        const { results } = await env.DB.prepare(
+          "SELECT * FROM usuarios ORDER BY id DESC LIMIT 100"
+        ).all();
         
         return new Response(JSON.stringify(results), {
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -26,6 +28,7 @@ export default {
       }
     }
 
+    // Método POST: Salva o novo usuário vindo da página de verificação facial
     if (request.method === "POST") {
       try {
         const dados = await request.json();
@@ -51,6 +54,6 @@ export default {
       }
     }
 
-    return new Response("IstFlow Worker rodando!", { headers: corsHeaders });
+    return new Response("IstFlow Worker rodando com sucesso!", { headers: corsHeaders });
   },
 };
