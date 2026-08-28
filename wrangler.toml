@@ -5,4 +5,4 @@ compatibility_date = "2026-08-28"
 [[d1_databases]]
 binding = "MY_DB"
 database_name = "istflowapi"
-database_id = "cde7d37f-893e-4035-8134-2cc2bd7404a"
+database_id = "cde7d37f-893e-4035-8134-2cc2bd7404ae"
