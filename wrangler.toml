@@ -1,0 +1,6 @@
+name = "istflow"
+main = "index.js"
+compatibility_date = "2026-08-28"
+
+[vars]
+# Se precisar de variáveis de ambiente, coloque aqui
