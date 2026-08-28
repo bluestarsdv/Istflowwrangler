@@ -10,18 +10,14 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    if (request.method === "POST") {
+    // Método GET: Puxa do banco D1 usando o binding DB
+    if (request.method === "GET") {
       try {
-        const dados = await request.json();
+        const { results } = await env.DB.prepare(
+          "SELECT * FROM usuarios ORDER BY id DESC LIMIT 100"
+        ).all();
         
-        // Aqui você faria o que quiser com os dados recebidos (nome, email, etc)
-        console.log("Dados recebidos:", dados);
-
-        return new Response(JSON.stringify({ 
-          sucesso: true, 
-          mensagem: "Recebido com sucesso!",
-          dadosRecebidos: dados 
-        }), {
+        return new Response(JSON.stringify(results), {
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       } catch (err) {
@@ -32,11 +28,32 @@ export default {
       }
     }
 
-    return new Response(JSON.stringify({ 
-      status: "online", 
-      mensagem: "Worker rodando perfeitamente!" 
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
-    });
+    // Método POST: Salva novos registros no banco D1
+    if (request.method === "POST") {
+      try {
+        const dados = await request.json();
+        const nome = dados.nome || '';
+        const email = dados.email || '';
+        const senha = dados.senha || '';
+        const idade = dados.idade || 0;
+        const tipoAcesso = dados.tipoAcesso || 'limitado';
+        const dataRegistro = new Date().toISOString();
+
+        await env.DB.prepare(
+          "INSERT INTO usuarios (nome, email, senha, idade, tipo_acesso, data) VALUES (?, ?, ?, ?, ?, ?)"
+        ).bind(nome, email, senha, idade, tipoAcesso, dataRegistro).run();
+
+        return new Response(JSON.stringify({ sucesso: true, mensagem: "Salvo com sucesso no banco!" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ sucesso: false, erro: err.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+    }
+
+    return new Response("Worker com D1 conectado rodando!", { headers: corsHeaders });
   },
 };
