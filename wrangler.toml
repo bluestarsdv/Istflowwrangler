@@ -1,6 +1,8 @@
-name = "istflow"
+name = "istflowwrangler"
 main = "index.js"
 compatibility_date = "2026-08-28"
 
-[vars]
-# Se precisar de variáveis de ambiente, coloque aqui
+[[d1_databases]]
+binding = "MYP"
+database_name = "istflowapi"
+database_id = "cde7d37f-893e-4035-8134-2cc2bd7404a"
