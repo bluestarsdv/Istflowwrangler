@@ -10,10 +10,10 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Método GET: Retorna a lista de usuários cadastrados do banco D1
+    // Método GET: Puxa os dados usando env.DataBank
     if (request.method === "GET") {
       try {
-        const { results } = await env.DB.prepare(
+        const { results } = await env.DataBank.prepare(
           "SELECT * FROM usuarios ORDER BY id DESC LIMIT 100"
         ).all();
         
@@ -28,7 +28,7 @@ export default {
       }
     }
 
-    // Método POST: Salva o novo usuário vindo da página de verificação facial
+    // Método POST: Salva os dados usando env.DataBank
     if (request.method === "POST") {
       try {
         const dados = await request.json();
@@ -39,7 +39,7 @@ export default {
         const tipoAcesso = dados.tipoAcesso || 'limitado';
         const dataRegistro = new Date().toISOString();
 
-        await env.DB.prepare(
+        await env.DataBank.prepare(
           "INSERT INTO usuarios (nome, email, senha, idade, tipo_acesso, data) VALUES (?, ?, ?, ?, ?, ?)"
         ).bind(nome, email, senha, idade, tipoAcesso, dataRegistro).run();
 
